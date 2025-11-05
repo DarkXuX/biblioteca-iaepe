@@ -6,12 +6,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CatalogacionComponent } from './catalogacion.component';
 import { CatalogacionRoutes } from './catalogacion.routing';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
     imports: [
         CommonModule,
         RouterModule.forChild(CatalogacionRoutes),
-        FormsModule
+        FormsModule,
+        MatSelectModule,
+        MatTooltipModule
     ],
     declarations: [CatalogacionComponent]
 })

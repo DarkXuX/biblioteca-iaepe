@@ -1,82 +1,204 @@
 <div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                  <div class="card-header card-header-primary card-header-icon  d-flex justify-content-between">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
 
-                    <div class="w-100">
-                      <div class="card-icon">
-                        <i class="material-icons">assignment</i>
-                      </div>
-                      <h4 class="card-title">Catalogación</h4>
-                    </div>
-
-                    <div class="mt-2 d-flex">
-                      <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
-                        <i class="material-icons material-icons pl-2 pt-1">download</i>
-                      </button>
-                      <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
-                        <i class="material-icons material-icons pl-2 pt-1">favorite</i>
-                      </button>
-                      <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
-                        <i class="material-icons material-icons pl-2 pt-1">download</i>
-                      </button>
-                      <!-- <button type="button" class="btn btn-fab btn-warning mt-3">
-                        <i class="material-icons">download</i>
-                      </button> -->
-                    </div>
-
-                  </div>
-                    <div class="card-body">
-                        <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
-                        </div>
-                        <div class="material-datatables">
-                          <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
-                                <thead>
-                                    <tr>
-                                      <th>{{ dataTable.headerRow[0] }}</th>
-                                      <th>{{ dataTable.headerRow[1] }}</th>
-                                      <th>{{ dataTable.headerRow[2] }}</th>
-                                      <th>{{ dataTable.headerRow[3] }}</th>
-                                      <th>{{ dataTable.headerRow[4] }}</th>
-                                      <th class="disabled-sorting text-right">{{ dataTable.headerRow[5] }}</th>
-                                    </tr>
-                                </thead>
-                                <tfoot>
-                                    <tr>
-                                      <th>{{ dataTable.footerRow[0] }}</th>
-                                      <th>{{ dataTable.footerRow[1] }}</th>
-                                      <th>{{ dataTable.footerRow[2] }}</th>
-                                      <th>{{ dataTable.footerRow[3] }}</th>
-                                      <th>{{ dataTable.footerRow[4] }}</th>
-                                      <th class="text-right">{{ dataTable.footerRow[5] }}</th>
-                                    </tr>
-                                </tfoot>
-                                <tbody>
-                                    <tr *ngFor="let row of dataTable.dataRows">
-                                        <td>{{row[0]}}</td>
-                                        <td>{{row[1]}}</td>
-                                        <td>{{row[2]}}</td>
-                                        <td>{{row[3]}}</td>
-                                        <td>{{row[4]}}</td>
-                                        <td class="text-right">
-                                          <a href="javascript:void(0)" class="btn btn-link btn-info btn-just-icon like"><i class="material-icons">favorite</i></a>
-                                          <a href="javascript:void(0)" class="btn btn-link btn-warning btn-just-icon edit"><i class="material-icons">dvr</i></a>
-                                          <a href="javascript:void(0)" class="btn btn-link btn-danger btn-just-icon remove"><i class="material-icons">close</i></a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- end content-->
-                </div>
-                <!--  end card  -->
+          <div class="card-header card-header-primary card-header-icon  d-flex justify-content-between">
+            <div class="w-100">
+              <div class="card-icon">
+                <i class="material-icons">add</i>
+              </div>
+              <h4 class="card-title">Catalogación</h4>
             </div>
-            <!-- end col-md-12 -->
+            <div class="mt-2 d-flex">
+              <!-- <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
+                <i class="material-icons material-icons pl-2 pt-1">download</i>
+              </button>
+              <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
+                <i class="material-icons material-icons pl-2 pt-1">favorite</i>
+              </button> -->
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="container">
+
+
+              <div class="row mt-3">
+                <div class="col-md-2">
+                  <h6 class="mt-3">Portada</h6>
+                </div>
+                <div class="col-md-4">
+                  <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                    <div class="fileinput-new thumbnail">
+                      <img src="./assets/img/image_placeholder.jpg" alt="...">
+                    </div>
+                    <div class="fileinput-preview fileinput-exists thumbnail"></div>
+                    <div>
+                      <span class="btn btn-rose btn-round btn-file">
+                        <span class="fileinput-new">Select image</span>
+                        <span class="fileinput-exists">Change</span>
+                        <input type="file" name="..." />
+                      </span>
+                      <a href="#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i
+                          class="fa fa-times"></i> Remove</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <h6 class="mt-3">Tipo de documento</h6>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <mat-select placeholder="..." name="city">
+                        <mat-option *ngFor="let doc of typesDocs" [value]="doc.value">
+                          {{ doc.viewValue }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2" matTooltip="Identificador único del registro dentro del sistema." [matTooltipPosition]="'above'">001</span>
+                    <h6 class="mt-3">Número de Control</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                 <div class="form-group">
+                    <input type="text" value="" placeholder="..." class="form-control" />
+                  </div>             
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2" matTooltip="Código de la agencia que asignó el número de control (001)." [matTooltipPosition]="'above'">003</span>
+                    <h6 class="mt-3">Identificador del Número de Control</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                    <input type="text" value="" placeholder="..." class="form-control" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2" matTooltip="Número Estándar Internacional para Libros." [matTooltipPosition]="'above'">020</span>
+                    <h6 class="mt-3">ISBN</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="d-flex justify-content-between">
+                    <div class="form-group w-100">
+                      <input type="text" value="" placeholder="..." class="form-control" />
+                    </div>
+                    <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab ml-3">
+                      <i class="material-icons material-icons">search</i>
+                    </button>
+                  </div>          
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2" matTooltip="Número Estándar Internacional para Publicaciones Seriadas." [matTooltipPosition]="'above'">022</span>
+                    <h6 class="mt-3">ISSN</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                    <input type="text" value="" placeholder="..." class="form-control" />
+                  </div>   
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2" matTooltip="El autor principal de la obra (persona)." [matTooltipPosition]="'above'">100</span>
+                    <h6 class="mt-3">Entrada Principal – Nombre Personal</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                    <input type="text" value="" placeholder="..." class="form-control" />
+                  </div>   
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2" matTooltip="El autor principal de la obra (organización o entidad)." [matTooltipPosition]="'above'">110</span>
+                    <h6 class="mt-3">Entrada Principal – Nombre Corporativo</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                    <input type="text" value="" placeholder="..." class="form-control" />
+                  </div>   
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2" matTooltip="Título uniforme para la entrada principal, si no hay autor." [matTooltipPosition]="'above'">130</span>
+                    <h6 class="mt-3">Entrada Principal – Título Uniforme</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                    <input type="text" value="" placeholder="..." class="form-control" />
+                  </div>   
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-secondary mt-1 mr-2">020</span>
+                    <h6 class="mt-3">ISBN</h6>
+                  </div>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <mat-select placeholder="..." name="city">
+                        <mat-option *ngFor="let city of cities" [value]="city.value">
+                          {{ city.viewValue }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+            
+
+
+
+            </div>
+          </div>
+          <!-- end content-->
         </div>
-        <!-- end row -->
+        <!--  end card  -->
+      </div>
+      <!-- end col-md-12 -->
     </div>
+    <!-- end row -->
+  </div>
 </div>
+
