@@ -159,3 +159,82 @@
     </div>
   </div>
 </div>
+
+<!-- Classic Modal -->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Devolución</h4>
+        <button mat-button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <i class="material-icons">clear</i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="get" action="/" class="form-horizontal">
+          <div class="row">
+            <label class="col-sm-2 col-form-label">Código del Libro / ID del Ejemplar</label>
+            <div class="col-sm-10">
+              <mat-form-field class="example-full-width">
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-sm-2 col-form-label">Título del Libro</label>
+            <div class="col-sm-10">
+              <mat-form-field class="example-full-width">
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-sm-2 col-form-label">Autor(es)</label>
+            <div class="col-sm-10">
+              <mat-form-field class="example-full-width">
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <label class="col-sm-2 col-form-label">Fecha de Devolución</label>
+            <div class="col-sm-10">
+              <mat-form-field>
+                <input matInput [matDatepicker]="picker" placeholder="Choose a date" (click)="picker.open()">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <label class="col-sm-2 col-form-label">Condiciones del libro</label>
+            <div class="col-sm-10">
+              <mat-radio-button value="1" name="exampleRadios" checked="true">En buen estado</mat-radio-button>
+              <br>
+              <mat-radio-button value="1" name="exampleRadios" checked="true">Con daños menores</mat-radio-button>
+              <br>
+              <mat-radio-button value="1" name="exampleRadios" checked="true">Páginas dobladas</mat-radio-button>
+              <br>
+            </div>
+          </div>
+
+          <div class="row">
+            <label class="col-sm-2 col-form-label">Observaciones</label>
+            <div class="col-sm-10">
+              <mat-form-field class="example-full-width">
+               <textarea matInput placeholder="Escribe aqui..."></textarea>
+              </mat-form-field> 
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button mat-raised-button type="button" class="btn btn-primary btn-link">Guardar</button>
+        <button mat-raised-button type="button" class="btn btn-danger btn-link" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

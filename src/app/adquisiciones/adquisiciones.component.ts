@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, AfterViewInit } from "@angular/core";
 
 declare interface DataTable {
   headerRow: string[];
@@ -12,257 +12,115 @@ declare const $: any;
   selector: "app-adquisiciones-cmp",
   templateUrl: "./adquisiciones.component.html",
 })
-export class AdquisicionesComponent implements OnInit {
+export class AdquisicionesComponent implements OnInit, AfterViewInit {
   public dataTable: DataTable;
 
   ngOnInit() {
     this.dataTable = {
-      headerRow: ["Name", "Position", "Office", "Age", "Date", "Actions"],
-      footerRow: ["Name", "Position", "Office", "Age", "Start Date", "Actions"],
+      headerRow: [
+        "ISBN",
+        "Nombre",
+        "Autor",
+        "Estado",
+        "Solicitante",
+        "Actions",
+      ],
+      footerRow: [
+        "ISBN",
+        "Nombre",
+        "Autor",
+        "Estado",
+        "Solicitante",
+        "Actions",
+      ],
 
       dataRows: [
-        ["Airi Satou", "Andrew Mike", "Develop", "2013", "99,225", ""],
-        ["Angelica Ramos", "John Doe", "Design", "2012", "89,241", "btn-round"],
-        ["Ashton Cox", "Alex Mike", "Design", "2010", "92,144", "btn-simple"],
         [
-          "Bradley Greer",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0321765723",
+          "El Señor de los Anillos",
+          "J.R.R. Tolkien",
+          "Prestado",
+          "Juan Pérez",
+          "Actions",
         ],
         [
-          "Brenden Wagner",
-          "Paul Dickens",
-          "Communication",
-          "2015",
-          "69,201",
+          "978-1400031702",
+          "El Principito",
+          "Antoine de Saint-Exupéry",
+          "Prestado",
+          "",
+          "Actions",
+        ],
+        [
+          "978-0743273565",
+          "Cien Años de Soledad",
+          "Gabriel García Márquez",
+          "Prestado",
+          "Juan Pérez",
           "",
         ],
         [
-          "Brielle Williamson",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0439708180",
+          "El Hobbit",
+          "J.R.R. Tolkien",
+          "Prestado",
+          "María López",
+          "Actions",
         ],
         [
-          "Caesar Vance",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0061120084",
+          "Moby Dick",
+          "Herman Melville",
+          "Prestado",
+          "Pepe Martínez",
+          "Actions",
         ],
         [
-          "Cedric Kelly",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0451524935",
+          "1984",
+          "George Orwell",
+          "Prestado",
+          "Carlos Rodríguez",
+          "Actions",
         ],
         [
-          "Charde Marshall",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0060930335",
+          "Orgullo y Prejuicio",
+          "Jane Austen",
+          "Prestado",
+          "Maria Fernández",
+          "Actions",
         ],
         [
-          "Colleen Hurst",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        ["Dai Rios", "Andrew Mike", "Develop", "2013", "99,225", ""],
-        ["Doris Wilder", "John Doe", "Design", "2012", "89,241", "btn-round"],
-        ["Fiona Green", "Alex Mike", "Design", "2010", "92,144", "btn-simple"],
-        [
-          "Garrett Winters",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        ["Gavin Cortez", "Paul Dickens", "Communication", "2015", "69,201", ""],
-        [
-          "Gavin Joyce",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0385504201",
+          "El Código Da Vinci",
+          "Dan Brown",
+          "Prestado",
+          "Ana Gómez",
+          "Actions",
         ],
         [
-          "Gloria Little",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0544003415",
+          "Harry Potter y la Piedra Filosofal",
+          "J.K. Rowling",
+          "Prestado",
+          "Miguel Sánchez",
+          "Actions",
         ],
         [
-          "Haley Kennedy",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Herrod Chandler",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Hope Fuentes",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        ["Howard Hatfield", "Andrew Mike", "Develop", "2013", "99,225", ""],
-        ["Jena Gaines", "John Doe", "Design", "2012", "89,241", "btn-round"],
-        [
-          "Jenette Caldwell",
-          "Alex Mike",
-          "Design",
-          "2010",
-          "92,144",
-          "btn-simple",
-        ],
-        [
-          "Jennifer Chang",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Martena Mccray",
-          "Paul Dickens",
-          "Communication",
-          "2015",
-          "69,201",
-          "",
-        ],
-        [
-          "Michael Silva",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Michelle House",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Paul Byrd",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Prescott Bartlett",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Quinn Flynn",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        ["Rhona Davidson", "Andrew Mike", "Develop", "2013", "99,225", ""],
-        ["Shou Itou", "John Doe", "Design", "2012", "89,241", "btn-round"],
-        ["Sonya Frost", "Alex Mike", "Design", "2010", "92,144", "btn-simple"],
-        [
-          "Suki Burks",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Tatyana Fitzpatrick",
-          "Paul Dickens",
-          "Communication",
-          "2015",
-          "69,201",
-          "",
-        ],
-        [
-          "Tiger Nixon",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Timothy Mooney",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Unity Butler",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Vivian Harrell",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
-        ],
-        [
-          "Yuri Berry",
-          "Mike Monday",
-          "Marketing",
-          "2013",
-          "49,990",
-          "btn-round",
+          "978-0743273565",
+          "Drácula",
+          "Bram Stoker",
+          "Prestado",
+          "Luis Vargas",
+          "Actions",
         ],
       ],
     };
   }
 
   ngAfterViewInit() {
-    $("#datatables").DataTable({
+    $("#datatablesAdquisiciones").DataTable({
       pagingType: "full_numbers",
       lengthMenu: [
         [5, 10, 25, 50, -1],
@@ -273,9 +131,61 @@ export class AdquisicionesComponent implements OnInit {
         search: "_INPUT_",
         searchPlaceholder: "Search records",
       },
+      
+      data: this.dataTable.dataRows,
+      columnDefs: [
+        // REGLA #1: Para la última columna (ACCIONES) - Ya la tenías
+        {
+          targets: -1,
+          className: "text-right",
+          orderable: false,
+          render: function (data, type, row) {
+            return `
+            <div class="dropdown">
+                <button href="#" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="true" >
+                    Regular
+                    <b class="caret"></b>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" data-toggle="modal" data-target="#myModal">ABRIR MODAL</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+            </div>
+          `;
+          },
+        },
+        // --- REGLA #2: NUEVA REGLA PARA LA COLUMNA DE ESTADO ---
+        {
+          // Apuntamos a la cuarta columna (índice 3)
+          targets: 3,
+          render: function (data, type, row) {
+            // 'data' aquí será el texto: "Prestado", "Disponible", etc.
+            let badgeClass = "";
+
+            // Asignamos una clase de color diferente según el estado
+            switch (data.toLowerCase()) {
+              case "prestado":
+                badgeClass = "badge-warning"; // Amarillo para 'Prestado'
+                break;
+              case "disponible":
+                badgeClass = "badge-success"; // Verde para 'Disponible'
+                break;
+              case "en reparación":
+                badgeClass = "badge-danger"; // Rojo para 'En Reparación'
+                break;
+              default:
+                badgeClass = "badge-secondary"; // Gris para cualquier otro estado
+            }
+
+            // Devolvemos el HTML del badge con la clase y el texto dinámicos
+            return `<div class="badge fs-6 w-100 ${badgeClass}">${data}</div>`;
+          },
+        },
+      ],
     });
 
-    const table = $("#datatables").DataTable();
+    const table = $("#datatablesAdquisiciones").DataTable();
 
     // Edit record
     table.on("click", ".edit", function (e) {

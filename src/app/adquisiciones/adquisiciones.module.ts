@@ -7,13 +7,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdquisicionesComponent } from './adquisiciones.component';
 import { AdquisicionesRoutes } from './adquisiciones.routing';
 import { MatSelectModule } from "@angular/material/select";
+import { MaterialModule } from '../app.module';
 
 @NgModule({
     imports: [
     CommonModule,
     RouterModule.forChild(AdquisicionesRoutes),
     FormsModule,
-    MatSelectModule
+    MatSelectModule,
+    ReactiveFormsModule,
+    MaterialModule
+    
 ],
     declarations: [AdquisicionesComponent]
 })
