@@ -81,7 +81,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Restricciones de Préstamo - Edición MARC 21</h4>
+        <h4 class="modal-title">Titulo modal</h4>
         <button mat-button type="button" class="close" data-dismiss="modal" aria-hidden="true">
           <i class="material-icons">clear</i>
         </button>
@@ -90,35 +90,53 @@
         <form method="get" action="/" class="form-horizontal">
 
 
-          <div class="row py-5 px-4">
-            <div class="col-md-12">
-              <div>
-                <h4>🏷️ MARC 21 - 852 (Fondos y Localización)</h4>
-                <h6 class="text-black-50">**CRÍTICO:** La ubicación ($c) es la clave principal que el sistema usará para
-                  aplicar las reglas
-                  de préstamo (ej. 14 días, Solo en sala).</h6>
-              </div>
-              <div class="container">
-                <div class="row">
-                  <label class="col-sm-4 col-form-label mt-3">$b - Subunidad o Campus:</label>
-                  <div class="col-sm-8">
-                    <mat-form-field class="example-full-width">
-                      <input matInput type="text">
-                    </mat-form-field>
-                  </div>
-                </div>
-                <div class="row">
-                  <label class="col-sm-4 col-form-label mt-3">$p - Número de Ejemplar (Inventario/Código de
-                    Barras):</label>
-                  <div class="col-sm-8">
-                    <mat-form-field class="example-full-width">
-                      <input matInput type="text">
-                    </mat-form-field>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button mat-raised-button type="button" class="btn btn-primary btn-link">Guardar</button>
+        <button mat-raised-button type="button" class="btn btn-danger btn-link" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add item Modal -->
+<div class="modal fade" id="myModalAddItem" tabindex="-1" role="dialog" aria-labelledby="myModalAddItem" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Modal agregar item</h4>
+        <button mat-button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <i class="material-icons">clear</i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="get" action="/" class="form-horizontal">
+
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button mat-raised-button type="button" class="btn btn-primary btn-link">Guardar</button>
+        <button mat-raised-button type="button" class="btn btn-danger btn-link" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- create ord compra Modal -->
+<div class="modal fade" id="myModalCrearteOrdCompra" tabindex="-1" role="dialog" aria-labelledby="myModalCrearteOrdCompra" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Crear orden de compra</h4>
+        <button mat-button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <i class="material-icons">clear</i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="get" action="/" class="form-horizontal">
+
 
         </form>
       </div>

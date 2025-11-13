@@ -148,6 +148,8 @@ export class AdquisicionesComponent implements OnInit, AfterViewInit {
                 </button>
                 <ul class="dropdown-menu">
                     <li><a href="#" data-toggle="modal" data-target="#myModal">ABRIR MODAL</a></li>
+                    <li><a href="#" data-toggle="modal" data-target="#myModalAddItem">Agregar item</a></li>
+                    <li><a href="#" data-toggle="modal" data-target="#myModalCrearteOrdCompra">Crear ord. de compra</a></li>
                     <li class="divider"></li>
                     <li><a href="#">Separated link</a></li>
                 </ul>
