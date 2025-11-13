@@ -47,6 +47,7 @@
     "datatables": "1.10.18",
     "datatables.net-bs4": "1.11.5",
     "datatables.net-responsive": "2.2.9",
+    "firebase": "^9.23.0",
     "fullcalendar": "3.10.1",
     "googleapis": "81.0.0",
     "hammerjs": "2.0.8",
