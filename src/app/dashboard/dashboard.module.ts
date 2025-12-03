@@ -7,6 +7,7 @@ import { MaterialModule } from '../app.module';
 
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutes } from './dashboard.routing';
+import { KpiCardComponent } from './components/kpi-card/kpi-card.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { DashboardRoutes } from './dashboard.routing';
         MdModule,
         MaterialModule,
     ],
-    declarations: [DashboardComponent]
+    declarations: [DashboardComponent, KpiCardComponent],
+    exports: [KpiCardComponent]
 })
 
 export class DashboardModule {}

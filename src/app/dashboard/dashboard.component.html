@@ -24,7 +24,7 @@
               </div>
           </div>
       </div> -->
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-md-4">
         <div class="card card-chart">
           <div class="card-header card-header-rose" data-header-animation="true">
@@ -116,6 +116,7 @@
         </div>
       </div>
     </div>
+    
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-stats">
@@ -182,7 +183,59 @@
           </div>
         </div>
       </div>
+    </div> -->
+
+    <div class="row">
+
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <app-kpi-card title="Inventario" [value]="kpiData.totalInventario" icon="inventory_2" iconColor="warning"
+          footerText="Total de materiales en la biblioteca." exportType="INVENTARIO_TOTAL"
+          (exportData)="onExportRequest($event)">
+        </app-kpi-card>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <app-kpi-card title="Nuevos Materiales" [value]="kpiData.nuevosLibros" icon="post_add" iconColor="success"
+          footerText="Registrados en el último trimestre." exportType="NUEVOS_MATERIALES_DETAIL"
+          (exportData)="onExportRequest($event)">
+        </app-kpi-card>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <app-kpi-card title="Préstamos Activos" [value]="kpiData.prestamosActivos" icon="book" iconColor="primary"
+          footerText="Materiales circulantes fuera del organismo." exportType="PRESTAMOS_DETAIL"
+          (exportData)="onExportRequest($event)">
+        </app-kpi-card>
+      </div>
+
     </div>
+
+    <div class="row">
+
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <app-kpi-card title="Usuarios" [value]="kpiData.totalUsuarios" icon="people" iconColor="info"
+          footerText="Total de usuarios registrados en el sistema." exportType="USUARIOS_TOTAL"
+          (exportData)="onExportRequest($event)">
+        </app-kpi-card>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <app-kpi-card title="Nuevos Usuarios" [value]="kpiData.nuevosUsuarios" icon="person_add" iconColor="rose"
+          footerText="Registrados este mes." exportType="NUEVOS_USUARIOS_DETAIL" (exportData)="onExportRequest($event)">
+        </app-kpi-card>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <app-kpi-card title="Devoluciones" [value]="kpiData.devoluciones" icon="check_circle" iconColor="success"
+          footerText="Total de devoluciones completadas." exportType="DEVOLUCIONES_DETAIL"
+          (exportData)="onExportRequest($event)">
+        </app-kpi-card>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <app-kpi-card title="Desincorporaciones" [value]="kpiData.desincorporaciones" icon="delete_sweep"
+          iconColor="danger" footerText="Materiales retirados del inventario." exportType="DESINCORPORACIONES_DETAIL"
+          (exportData)="onExportRequest($event)">
+        </app-kpi-card>
+      </div>
+
+    </div>
+
     <!--
       <h3>Manage Listings</h3>
       <br>
