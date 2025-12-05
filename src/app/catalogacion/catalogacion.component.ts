@@ -5,6 +5,7 @@ import {
   ViewChild,
   ElementRef,
 } from "@angular/core";
+import { ActivatedRoute } from "@angular/router"; // 🚩 Importación necesaria
 
 // Define los tipos posibles para 'tipo'
 type TipoElemento = "Button" | "List" | "Normal";
@@ -25,6 +26,7 @@ interface RuleNorm {
   // Opcional: Para una descripción completa de MARC 21
   indicators?: string[]; // Ej: ["Posición 1: No se define un Indicador", "Posición 2: Número de caracteres omitidos"]
   subfields?: Subfield[];
+  isCustom?: boolean; // Nueva propiedad
 }
 
 // Intefaz para Tipos de documentos
@@ -34,94 +36,15 @@ interface TipoDocumento {
   rules: string[];
 }
 
+// Interfaz mejorada para la cubierta
+interface CoverData {
+  file: File | any; // 'any' permite que sea File o nuestro mock object
+  previewUrl: string | null;
+}
+
 @Component({
   selector: "app-catalogacion-cmp",
-  styles: [
-    `
-      /* book-cover-upload.component.css */
-      .upload-container {
-        border: 2px dashed #dee2e6;
-        border-radius: 8px;
-        padding: 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        background-color: #f8f9fa;
-        min-height: 200px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .upload-container:hover {
-        border-color: #007bff;
-        background-color: #e7f3ff;
-      }
-
-      .upload-container.dragover {
-        border-color: #007bff;
-        background-color: #e7f3ff;
-        transform: scale(1.02);
-      }
-
-      .preview-container {
-        margin-top: 1rem;
-      }
-
-      .preview-image {
-        max-width: 100%;
-        max-height: 200px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .file-info {
-        margin-top: 1rem;
-        padding: 0.75rem;
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        font-size: 0.9rem;
-      }
-
-      .btn-remove {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: rgba(220, 53, 69, 0.8);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-
-      .btn-remove:hover {
-        background-color: rgba(220, 53, 69, 1);
-        transform: scale(1.1);
-      }
-
-      .preview-wrapper {
-        position: relative;
-        display: inline-block;
-      }
-
-      .card {
-        height: 100%;
-        transition: transform 0.3s;
-      }
-
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      }
-    `,
-  ],
+  // styles: [],
   templateUrl: "catalogacion.component.html",
 })
 export class CatalogacionComponent implements OnInit, AfterViewInit {
@@ -135,6 +58,7 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
     { value: "moscow-6", viewValue: "Moscow" },
   ];
 
+  // Tipos de documentos
   typesDocs: TipoDocumento[] = [
     {
       value: "00",
@@ -155,6 +79,8 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
         "520",
         "650",
         "700",
+        "940",
+        "941",
       ],
     },
     {
@@ -335,8 +261,50 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
         "700",
       ],
     },
+    {
+      value: "12",
+      viewValue: "Gaceta oficial",
+      rules: [
+        "001",
+        "003",
+        "005",
+        "008",
+        "020",
+        "100",
+        "245",
+        "250",
+        "264",
+        "300",
+        "490",
+        "500",
+        "520",
+        "650",
+        "700",
+        "942",
+      ],
+    },
+    {
+      value: "13",
+      viewValue: "Material audiovisual",
+      rules: [
+        "001",
+        "003",
+        "005",
+        "006",
+        "007",
+        "008",
+        "245",
+        "264",
+        "300",
+        "538",
+        "650",
+        "856",
+        "940",
+      ],
+    },
   ];
 
+  // Parte de las reglas MARC 21
   rulesMARC: RuleNorm[] = [
     {
       matTooltip: "Identificador único del registro dentro del sistema.",
@@ -707,13 +675,55 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
       label: "Acceso Electrónico",
       tipo: "Normal",
     },
+    {
+      matTooltip: "Número de la cota.",
+      number: "940",
+      label: "Cota",
+      tipo: "Normal",
+      isCustom: true, // Marca como regla personalizada
+    },
+    {
+      matTooltip: "Persona o entidad que donó el material.",
+      number: "941",
+      label: "Donado por",
+      tipo: "Normal",
+      isCustom: true, // Marca como regla personalizada
+    },
+    {
+      matTooltip: "Número de identificación específica de la Gaceta Oficial.",
+      number: "942",
+      label: "Número de Gaceta",
+      tipo: "Normal",
+      isCustom: true, // Marca como regla personalizada
+    },
+    {
+      matTooltip:
+        "Contiene los datos de volumen, número, y el rango de páginas del artículo para su rápida ubicación.",
+      number: "943",
+      label: "Localización del Artículo",
+      tipo: "Normal",
+      isCustom: true, // Marca como regla personalizada
+    },
   ];
 
-  covers = {
+  covers: {
+    portada: CoverData;
+    lomo: CoverData;
+    contraportada: CoverData;
+  } = {
     portada: { file: null, previewUrl: null },
     lomo: { file: null, previewUrl: null },
     contraportada: { file: null, previewUrl: null },
   };
+
+  // 1. Lista de tipos de documento que deben mostrar la carga de Portada, Lomo y Contraportada
+  readonly COVER_REQUIRED_TYPES: string[] = ["00", "01", "02", "11"];
+  // 2. Nueva propiedad para controlar la visibilidad en el HTML
+  public showCoverInputs: boolean = false;
+
+  // Nueva propiedad para el modo y los datos MARC (para vincular el formulario)
+  public isEditMode: boolean = false;
+  public marcData: { [key: string]: string } = {}; // Almacena los datos del registro
 
   // Referencias a los elementos input
   @ViewChild("portadaInput") portadaInput: ElementRef;
@@ -723,11 +733,117 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
   docSelectInput: TipoDocumento | null = null;
   filteredRules: RuleNorm[] = [];
 
-  constructor() {}
+  constructor(private route: ActivatedRoute) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadDataForEditMode();
+    // Si no es modo edición, inicializar para creación
+    if (!this.isEditMode && !this.docSelectInput) {
+      const defaultDocType = "00";
+      // 🚩 CORRECCIÓN PARA MODO CREACIÓN:
+      const defaultDoc = this.typesDocs.find((d) => d.value === defaultDocType);
+      if (defaultDoc) {
+        this.docSelectInput = defaultDoc;
+        this.filterRules(defaultDocType); // O this.filterRules(defaultDoc.value);
+      } else {
+        console.error("Tipo de documento predeterminado no encontrado.");
+      }
+    }
+  }
 
   ngAfterViewInit() {}
+
+  /**
+   * Función requerida por mat-select para comparar dos objetos TipoDocumento.
+   * Esto asegura que el valor precargado (docSelectInput) coincida con un valor de la lista.
+   */
+  public compareTipoDocumento(
+    o1: TipoDocumento | null,
+    o2: TipoDocumento | null
+  ): boolean {
+    // Si uno de los valores es null/undefined, devuelve false
+    if (!o1 || !o2) {
+      return false;
+    }
+    // Compara solo por la propiedad 'value' (el código MARC: "00", "01", etc.)
+    return o1.value === o2.value;
+  }
+
+  loadDataForEditMode(): void {
+    this.route.paramMap.subscribe((params) => {
+      const itemId = params.get("id");
+      if (itemId) {
+        this.isEditMode = true;
+        const result = this.fakeAPICall(itemId);
+        if (result) {
+          const { docType, marcData, coversData } = result;
+          // 🚩 PASO CLAVE PARA CORREGIR EL ERROR:
+          // Buscar el objeto completo de TipoDocumento.
+          const selectedDoc = this.typesDocs.find((d) => d.value === docType);
+          if (selectedDoc) {
+            // 1. Asignar el objeto completo (TipoDocumento) al input
+            this.docSelectInput = selectedDoc;
+            // 2. Cargar las reglas (filterRules sigue esperando el string value)
+            this.filterRules(docType);
+            // 3. Cargar datos MARC
+            this.marcData = marcData;
+            // 4. Precargar imágenes
+            this.loadExistingCovers(coversData);
+          } else {
+            console.error(
+              `Tipo de documento ${docType} no encontrado en la lista.`
+            );
+            this.isEditMode = false;
+          }
+        } else {
+          // ... (lógica de no encontrado)
+        }
+      } else {
+        // ... (lógica de modo creación)
+      }
+    });
+  }
+
+  private fakeAPICall(id: string): any {
+    // --- Data del Libro de Prueba (ID: 123) ---
+    if (id === "123") {
+      const TEST_BOOK_DATA = {
+        "001": "123",
+        "003": "IAEPE",
+        "005": "20251204163000.0", // Fecha y hora de última transacción (Falso)
+        "008": "251204s2024____ve_|||||000|0|spa|d", // Información codificada
+        "020": "978-980-00-1234-5", // ISBN
+        "100": "^a Pérez, Juan ^e autor", // Autor Principal
+        "245":
+          "^a El Proceso Electoral Moderno: ^b Fundamentos y Desafíos. ^c por Juan Pérez y Ana Rodríguez.", // Título
+        "246": "^a Proceso Electoral Moderno", // Título variante (si lo necesitas)
+        "264": "^a Caracas : ^b Editorial IAEPE, ^c 2024.", // Publicación
+        "300": "^a 450 p. : ^b il. ; ^c 24 cm.", // Descripción Física
+        "520":
+          "^a Este libro analiza las transformaciones en los sistemas electorales contemporáneos...", // Resumen
+        "650": "^a Derecho Electoral", // Materia
+        "700": "^a Rodríguez, Ana ^e coautor", // Entrada Secundaria
+        "940": "DERECHO 342.7 P374e", // Cota de Ubicación (Campo local)
+        "941": "Donado por el CNE - Lote 2024/05", // Fuente de Adquisición (Campo local)
+      };
+      const TEST_COVERS_DATA = {
+        portadaUrl:
+          "https://booksflea.com/wp-content/uploads/2022/07/9788497945318G-1.jpg", // URL de Portada
+        lomoUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlLN5pf8ZTOuxRcVVzdiorLnRJ6I8KVgGetA&s", // URL de Lomo
+        contraportadaUrl: null, // Sin Contraportada
+      };
+
+      return {
+        docType: "00", // Código de 'Libro/Monografía'
+        marcData: TEST_BOOK_DATA,
+        coversData: TEST_COVERS_DATA,
+      };
+    }
+
+    // Si se pasa cualquier otro ID, simula que no se encontró en la API.
+    return null;
+  }
 
   filterRules(selectedDoc): void {
     for (let i = 0; i < this.typesDocs.length; i++) {
@@ -741,8 +857,16 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
             }
           });
         });
+
+        // 🚩 LÓGICA AGREGADA: Controlar la visibilidad de los inputs de imagen
+        // Verifica si el tipo de documento seleccionado está en la lista de tipos que requieren cubiertas
+        this.showCoverInputs = this.COVER_REQUIRED_TYPES.includes(selectedDoc);
+        // Una vez que se encuentra el tipo, se puede salir del bucle
+        return;
       }
     }
+    // Si no se encuentra o no hay imagen seleccionadaa, oculta los inputs
+    this.showCoverInputs = false;
   }
 
   // Funcionts for imagens ---------------------------------------------------
@@ -752,18 +876,15 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
       this.handleFile(input.files[0], type);
     }
   }
-
   onDrop(event: DragEvent, type: string): void {
     event.preventDefault();
     if (event.dataTransfer.files && event.dataTransfer.files.length) {
       this.handleFile(event.dataTransfer.files[0], type);
     }
   }
-
   onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
-
   handleFile(file: File, type: string): void {
     // Validar tipo de archivo
     if (!file.type.match("image.*")) {
@@ -785,12 +906,10 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
     };
     reader.readAsDataURL(file);
   }
-
   removeImage(type: string): void {
     this.covers[type].file = null;
     this.covers[type].previewUrl = null;
   }
-
   formatFileSize(bytes: number): string {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -798,8 +917,6 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
-
-  // Método para abrir el selector de archivos
   openFileSelector(type: string): void {
     switch (type) {
       case "portada":
@@ -814,7 +931,9 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Verificar si todas las imágenes están seleccionadas
+  /** 
+   * Verificar si todas las imágenes están seleccionadas
+  */
   allImagesSelected(): boolean {
     return (
       this.covers.portada.file &&
@@ -822,10 +941,59 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
       this.covers.contraportada.file
     );
   }
-
   uploadImages(): void {
     // Aquí implementarías la lógica para subir las imágenes al servidor
     console.log("Subiendo imágenes:", this.covers);
     alert("Imágenes listas para subir. Revisa la consola para ver los datos.");
+  }
+
+  /**
+   * Función pública para cargar las URLs existentes.
+   * DEBES llamar a esta función cuando el componente cargue en modo edición.
+   */
+  public loadExistingCovers(data: {
+    portadaUrl: string | null;
+    lomoUrl: string | null;
+    contraportadaUrl: string | null;
+  }): void {
+    this.preloadImage("portada", data.portadaUrl);
+    this.preloadImage("lomo", data.lomoUrl);
+    this.preloadImage("contraportada", data.contraportadaUrl);
+  }
+
+  private preloadImage(type: string, url: string | null): void {
+    if (!url) return;
+    // PASO CLAVE: Creamos un objeto que imita a un File, pero con un flag isMock
+    // Esto evita errores al acceder a .name y .size en el HTML, y permite
+    // que la lógica de subida sepa que no debe subir esta imagen de nuevo.
+    const mockFile = {
+      name: `Imagen Existente (${type})`,
+      size: 1, // Tamaño mínimo (1 Byte) para que formatFileSize funcione
+      isMock: true,
+    };
+
+    this.covers[type] = {
+      file: mockFile,
+      previewUrl: url, // La URL es la que se mostrará
+    };
+  }
+
+  /**
+   * Verifica si se ha seleccionado una imagen nueva (no pre-cargada)
+   * para saber si debe habilitar el botón de subida.
+   */
+  canUploadNewImages(): boolean {
+    // La condición es que el archivo exista Y que NO sea un archivo mock.
+    const isNewFile = (cover: CoverData) =>
+      cover.file && !(cover.file as any).isMock;
+
+    // Retorna true solo si hay un archivo nuevo en portada, lomo, O contraportada.
+    // Asumiendo que solo subes cuando *todas* están listas, si cambias la lógica
+    // a "solo subir las nuevas", ajusta el `&&` a `||`.
+    return (
+      isNewFile(this.covers.portada) ||
+      isNewFile(this.covers.lomo) ||
+      isNewFile(this.covers.contraportada)
+    );
   }
 }
