@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 declare interface DataTable {
   headerRow: string[];
@@ -14,6 +15,8 @@ declare const $: any;
 })
 export class AdquisicionesComponent implements OnInit, AfterViewInit {
   public dataTable: DataTable;
+
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.dataTable = {
@@ -131,7 +134,7 @@ export class AdquisicionesComponent implements OnInit, AfterViewInit {
         search: "_INPUT_",
         searchPlaceholder: "Search records",
       },
-      
+
       data: this.dataTable.dataRows,
       columnDefs: [
         // REGLA #1: Para la última columna (ACCIONES) - Ya la tenías
@@ -147,11 +150,9 @@ export class AdquisicionesComponent implements OnInit, AfterViewInit {
                     <b class="caret"></b>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="#" data-toggle="modal" data-target="#myModal">ABRIR MODAL</a></li>
                     <li><a href="#" data-toggle="modal" data-target="#myModalAddItem">Agregar item</a></li>
-                    <li><a href="#" data-toggle="modal" data-target="#myModalCrearteOrdCompra">Crear ord. de compra</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
+                    <!-- <li><a href="#" data-toggle="modal" data-target="#myModalCrearteOrdCompra">Crear ord. de compra</a></li> --->
+                    <li><a href="javascript:void(0);" class="btn-editar-registro" data-id="${123}">Editar item</a></li>
                 </ul>
             </div>
           `;
@@ -222,6 +223,19 @@ export class AdquisicionesComponent implements OnInit, AfterViewInit {
       e.preventDefault();
     });
 
+    // Usamos delegación de eventos para capturar el clic en la clase .btn-editar-registro
+    table.on('click', '.btn-editar-registro', (event: any) => {
+      event.preventDefault(); // Previene cualquier navegación por defecto del <a>
+      // Obtiene el ID que guardamos en el atributo data-id
+      const itemId = $(event.currentTarget).data('id');       
+      if (itemId) {
+        // 🚩 Navegación programática con el Router de Angular
+        // Esto redirige a: #/catalogacion/ID
+        this.router.navigate(['/catalogacion', itemId]);
+      }
+    });
+
     $(".card .material-datatables label").addClass("form-group");
   }
+
 }
