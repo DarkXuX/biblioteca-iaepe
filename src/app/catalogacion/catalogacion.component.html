@@ -164,7 +164,9 @@
                             <div *ngIf="covers.portada.previewUrl" class="preview-container">
                               <div class="preview-wrapper">
                                 <img [src]="covers.portada.previewUrl" class="preview-image" alt="Portada" />
-                                <button class="btn-remove" (click)="removeImage('portada')"></button>
+                                <button class="btn-remove" (click)="removeImage('portada')">
+                                  <i class="material-icons">delete</i>
+                                </button>
                               </div>
                               <div class="file-info">
                                 <div class="d-flex justify-content-between">
@@ -207,7 +209,9 @@
                             <div *ngIf="covers.lomo.previewUrl" class="preview-container">
                               <div class="preview-wrapper">
                                 <img [src]="covers.lomo.previewUrl" class="preview-image" alt="Lomo" />
-                                <button class="btn-remove" (click)="removeImage('lomo')"></button>
+                                <button class="btn-remove" (click)="removeImage('lomo')">
+                                  <i class="material-icons">delete</i>
+                                </button>
                               </div>
                               <div class="file-info">
                                 <div class="d-flex justify-content-between">
@@ -254,7 +258,9 @@
                               <div class="preview-wrapper">
                                 <img [src]="covers.contraportada.previewUrl" class="preview-image"
                                   alt="Contraportada" />
-                                <button class="btn-remove" (click)="removeImage('contraportada')"></button>
+                                <button class="btn-remove" (click)="removeImage('contraportada')">
+                                  <i class="material-icons">delete</i>
+                                </button>
                               </div>
                               <div class="file-info">
                                 <div class="d-flex justify-content-between">

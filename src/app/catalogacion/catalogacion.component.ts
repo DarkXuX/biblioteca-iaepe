@@ -828,9 +828,9 @@ export class CatalogacionComponent implements OnInit, AfterViewInit {
       };
       const TEST_COVERS_DATA = {
         portadaUrl:
-          "https://booksflea.com/wp-content/uploads/2022/07/9788497945318G-1.jpg", // URL de Portada
+          "../assets/img/La divina comedia/cover.jfif", // URL de Portada
         lomoUrl:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlLN5pf8ZTOuxRcVVzdiorLnRJ6I8KVgGetA&s", // URL de Lomo
+          "../assets/img/La divina comedia/lomo.jfif", // URL de Lomo
         contraportadaUrl: null, // Sin Contraportada
       };
 
