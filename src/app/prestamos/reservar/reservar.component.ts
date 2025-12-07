@@ -6,119 +6,93 @@ declare interface DataTable {
   dataRows: string[][];
 }
 
-declare const $: any;
+// 🚩 INTERFAZ: Define la estructura de una Reserva Activa
+interface ActiveReservation {
+    idReserva: string;
+    isbn: string;
+    titulo: string;
+    solicitante: string;
+    fechaReserva: string;
+    estadoReserva: "Pendiente" | "Activa" | "Cancelada" | "Expirada";
+}
+
+// 🚩 INTERFAZ: Define el formulario para procesar una reserva (e.g., alistar el libro)
+interface ReservationProcessForm {
+    reserva: ActiveReservation;
+    fechaProceso: string;
+    accion: "Alistar Ejemplar" | "Cancelar Reserva";
+    observaciones: string;
+}
+
+declare const $: any; // Declaración para usar jQuery / DataTables
+
 @Component({
   selector: "app-reservar-cmp",
   templateUrl: "./reservar.component.html",
 })
 export class ReservarComponent implements OnInit, AfterViewInit {
- public dataTable: DataTable;
+  public dataTable: DataTable;
+  public selectedProcessForm: ReservationProcessForm | null = null;
+  
+  // 🚩 DATOS DE ORIGEN: Lista de Reservas Activas/Pendientes 🚩
+  private activeReservations: ActiveReservation[] = [
+    { idReserva: "R-001", isbn: "978-0321765723", titulo: "El Señor de los Anillos", solicitante: "Juan Pérez", fechaReserva: "2024-11-25", estadoReserva: "Pendiente" },
+    { idReserva: "R-002", isbn: "978-0544003415", titulo: "Harry Potter y la Piedra Filosofal", solicitante: "Miguel Sánchez", fechaReserva: "2024-11-10", estadoReserva: "Activa" },
+    { idReserva: "R-003", isbn: "978-0743273565", titulo: "Cien Años de Soledad", solicitante: "Ana Gómez", fechaReserva: "2024-12-01", estadoReserva: "Pendiente" },
+    { idReserva: "R-004", isbn: "978-0060930335", titulo: "Orgullo y Prejuicio", solicitante: "María Fernández", fechaReserva: "2024-10-15", estadoReserva: "Expirada" },
+  ];
+
+  private getTodayDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   ngOnInit() {
     this.dataTable = {
       headerRow: [
-        "ISBN",
-        "Nombre",
-        "Autor",
-        "Estado",
+        "ID Reserva",
+        "ISBN",       
+        "Título",     
         "Solicitante",
-        "Actions",
+        "Fecha Reserva", 
+        "Estado Reserva", 
+        "Actions",    
       ],
       footerRow: [
+        "ID Reserva",
         "ISBN",
-        "Nombre",
-        "Autor",
-        "Estado",
+        "Título",
         "Solicitante",
+        "Fecha Reserva", 
+        "Estado Reserva", 
         "Actions",
       ],
 
-      dataRows: [
-        [
-          "978-0321765723",
-          "El Señor de los Anillos",
-          "J.R.R. Tolkien",
-          "Prestado",
-          "Juan Pérez",
-          "Actions",
-        ],
-        [
-          "978-1400031702",
-          "El Principito",
-          "Antoine de Saint-Exupéry",
-          "Prestado",
-          "",
-          "Actions",
-        ],
-        [
-          "978-0743273565",
-          "Cien Años de Soledad",
-          "Gabriel García Márquez",
-          "Prestado",
-          "Juan Pérez",
-          "",
-        ],
-        [
-          "978-0439708180",
-          "El Hobbit",
-          "J.R.R. Tolkien",
-          "Prestado",
-          "María López",
-          "Actions",
-        ],
-        [
-          "978-0061120084",
-          "Moby Dick",
-          "Herman Melville",
-          "Prestado",
-          "Pepe Martínez",
-          "Actions",
-        ],
-        [
-          "978-0451524935",
-          "1984",
-          "George Orwell",
-          "Prestado",
-          "Carlos Rodríguez",
-          "Actions",
-        ],
-        [
-          "978-0060930335",
-          "Orgullo y Prejuicio",
-          "Jane Austen",
-          "Prestado",
-          "Maria Fernández",
-          "Actions",
-        ],
-        [
-          "978-0385504201",
-          "El Código Da Vinci",
-          "Dan Brown",
-          "Prestado",
-          "Ana Gómez",
-          "Actions",
-        ],
-        [
-          "978-0544003415",
-          "Harry Potter y la Piedra Filosofal",
-          "J.K. Rowling",
-          "Prestado",
-          "Miguel Sánchez",
-          "Actions",
-        ],
-        [
-          "978-0743273565",
-          "Drácula",
-          "Bram Stoker",
-          "Prestado",
-          "Luis Vargas",
-          "Actions",
-        ],
-      ],
+      // Mapeamos los datos de las reservas activas
+      dataRows: this.activeReservations.map((r) => [
+        r.idReserva,
+        r.isbn,
+        r.titulo,
+        r.solicitante,
+        r.fechaReserva,
+        r.estadoReserva, // Columna 5 (Estado Reserva)
+        r.idReserva,     // Columna 6 (Usaremos el ID para la acción)
+      ]),
     };
   }
 
   ngAfterViewInit() {
+    setTimeout(() => {
+        this.initializeDataTable();
+        this.setupDataTableClickHandlers();
+        $(".card .material-datatables label").addClass("form-group");
+    }, 10);
+  }
+
+  private initializeDataTable(): void {
     $("#datatablesReservar").DataTable({
       pagingType: "full_numbers",
       lengthMenu: [
@@ -128,97 +102,134 @@ export class ReservarComponent implements OnInit, AfterViewInit {
       responsive: true,
       language: {
         search: "_INPUT_",
-        searchPlaceholder: "Search records",
+        searchPlaceholder: "Buscar reservas...",
       },
-      
+
       data: this.dataTable.dataRows,
       columnDefs: [
-        // REGLA #1: Para la última columna (ACCIONES) - Ya la tenías
+        // --- REGLA #1: Columna de ESTADO Reserva ---
         {
-          targets: -1,
-          className: "text-right",
-          orderable: false,
-          render: function (data, type, row) {
-            return `
-            <div class="dropdown">
-                <button href="#" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="true" >
-                    Regular
-                    <b class="caret"></b>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="#" data-toggle="modal" data-target="#myModal">ABRIR MODAL</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                </ul>
-            </div>
-          `;
-          },
-        },
-        // --- REGLA #2: NUEVA REGLA PARA LA COLUMNA DE ESTADO ---
-        {
-          // Apuntamos a la cuarta columna (índice 3)
-          targets: 3,
-          render: function (data, type, row) {
-            // 'data' aquí será el texto: "Prestado", "Disponible", etc.
+          targets: 5, // Columna de Estado Reserva
+          render: (data, type, row) => {
+            // 'data' es el estadoReserva
             let badgeClass = "";
-
-            // Asignamos una clase de color diferente según el estado
-            switch (data.toLowerCase()) {
-              case "prestado":
-                badgeClass = "badge-warning"; // Amarillo para 'Prestado'
-                break;
-              case "disponible":
-                badgeClass = "badge-success"; // Verde para 'Disponible'
-                break;
-              case "en reparación":
-                badgeClass = "badge-danger"; // Rojo para 'En Reparación'
-                break;
-              default:
-                badgeClass = "badge-secondary"; // Gris para cualquier otro estado
+            
+            switch (data) {
+                case "Pendiente":
+                    badgeClass = "badge-warning";
+                    break;
+                case "Activa":
+                    badgeClass = "badge-success";
+                    break;
+                case "Cancelada":
+                case "Expirada":
+                    badgeClass = "badge-danger";
+                    break;
+                default:
+                    badgeClass = "badge-secondary";
             }
 
-            // Devolvemos el HTML del badge con la clase y el texto dinámicos
-            return `<div class="badge fs-6 w-100 ${badgeClass}">${data}</div>`;
+            return `<div class="badge fs-6 w-100 ${badgeClass} text-center">${data}</div>`;
+          },
+        },
+        
+        // --- REGLA #2: Columna de ACCIONES (Procesar Reserva) ---
+        {
+          targets: -1, // Última columna (índice 6)
+          className: "text-right",
+          orderable: false,
+          render: (data, type, row) => {
+            // 'data' es el idReserva
+            const estadoActual = row[5]; 
+            
+            if (estadoActual === "Pendiente" || estadoActual === "Activa") {
+                return `
+                  <button type="button" class="btn btn-info btn-round btn-sm process-reservation" 
+                          data-id="${data}" data-toggle="modal" data-target="#processModal" title="Procesar Reserva">
+                      <i class="material-icons">send</i> Procesar
+                  </button>
+                `;
+            } else {
+                return `
+                  <button type="button" class="btn btn-default btn-round btn-sm disabled" title="Reserva Finalizada">
+                      <i class="material-icons">lock</i> Finalizada
+                  </button>
+                `;
+            }
           },
         },
       ],
     });
+  }
 
-    const table = $("#datatablesReservar").DataTable();
+  // Manejador de clics en el botón "Procesar"
+  private setupDataTableClickHandlers(): void {
+    $("body").off("click", "#datatablesReservar .process-reservation"); 
 
-    // Edit record
-    table.on("click", ".edit", function (e) {
-      let $tr = $(this).closest("tr");
-      if ($($tr).hasClass("child")) {
-        $tr = $tr.prev(".parent");
+    $("body").on("click", "#datatablesReservar .process-reservation", (e: any) => {
+      e.preventDefault();
+      const idReserva = $(e.currentTarget).data("id");
+      this.cargarDetalleProceso(idReserva);
+    });
+  }
+
+  // FUNCIÓN: Carga los detalles de la reserva en el formulario del modal
+  public cargarDetalleProceso(idReserva: string): void {
+    const reserva = this.activeReservations.find((r) => r.idReserva === idReserva);
+
+    if (reserva) {
+        let accionSugerida: "Alistar Ejemplar" | "Cancelar Reserva" = reserva.estadoReserva === 'Pendiente' ? "Alistar Ejemplar" : "Cancelar Reserva";
+
+        this.selectedProcessForm = {
+            reserva: reserva,
+            fechaProceso: this.getTodayDate(),
+            accion: accionSugerida, // Sugerencia inicial
+            observaciones: '',
+        };
+    } else {
+      this.selectedProcessForm = null;
+      console.error(`Reserva con ID ${idReserva} no encontrada.`);
+    }
+  }
+  
+  // FUNCIÓN: Simula el registro del Proceso de la Reserva
+  public procesarReserva(): void {
+      if (this.selectedProcessForm) {
+          const r = this.selectedProcessForm.reserva;
+          let nuevoEstado: ActiveReservation['estadoReserva'];
+          
+          if (this.selectedProcessForm.accion === 'Alistar Ejemplar') {
+              nuevoEstado = 'Activa'; // El ejemplar está listo para ser recogido por el solicitante
+              alert(`✅ Reserva #${r.idReserva} Activada. El ejemplar debe ser retirado en los próximos días.`);
+          } else {
+              nuevoEstado = 'Cancelada';
+              alert(`❌ Reserva #${r.idReserva} Cancelada.`);
+          }
+
+          // 1. Simulación: Actualizar la data en Angular
+          const index = this.activeReservations.findIndex(e => e.idReserva === r.idReserva);
+          if(index !== -1) {
+            this.activeReservations[index].estadoReserva = nuevoEstado;
+          }
+
+          $("#processModal").modal("hide");
+          this.selectedProcessForm = null; 
+
+          // 2. Reiniciar la tabla para reflejar el nuevo estado
+          this.reinitializeTable();
       }
+  }
 
-      var data = table.row($tr).data();
-      alert(
-        "You press on Row: " +
-          data[0] +
-          " " +
-          data[1] +
-          " " +
-          data[2] +
-          "'s row."
-      );
-      e.preventDefault();
-    });
-
-    // Delete a record
-    table.on("click", ".remove", function (e) {
-      const $tr = $(this).closest("tr");
-      table.row($tr).remove().draw();
-      e.preventDefault();
-    });
-
-    //Like record
-    table.on("click", ".like", function (e) {
-      alert("You clicked on Like button");
-      e.preventDefault();
-    });
-
-    $(".card .material-datatables label").addClass("form-group");
+  // Función para destruir y recrear la tabla
+  private reinitializeTable(): void {
+    const table = $("#datatablesReservar").DataTable();
+    if (table) {
+        table.destroy();
+    }
+    this.ngOnInit(); // Recarga los datos mapeados
+    setTimeout(() => {
+        this.initializeDataTable();
+        this.setupDataTableClickHandlers();
+    }, 10);
   }
 }

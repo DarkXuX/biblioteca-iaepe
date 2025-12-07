@@ -6,120 +6,103 @@ declare interface DataTable {
   dataRows: string[][];
 }
 
+// 🚩 INTERFAZ: Define la estructura de una Sanción/Multa
+interface Sancion {
+    idSancion: string;
+    solicitante: string;
+    motivo: 'Retraso' | 'Daño Material' | 'Pérdida';
+    tipo: 'Suspension' | 'Multa' | 'Ambos';
+    montoMulta: number; // 0 si es solo suspensión
+    diasSuspension: number; // 0 si es solo multa
+    fechaInicio: string;
+    fechaFin: string; // Se calcula
+    estado: 'Vigente' | 'Finalizada' | 'Pendiente Pago';
+}
+
 declare const $: any;
+
 @Component({
   selector: "app-suspender-multas-cmp",
   templateUrl: "./suspender-multas.component.html",
 })
-
 export class SuspenderMultasComponent implements OnInit, AfterViewInit {
- public dataTable: DataTable;
+  public dataTable: DataTable;
+  
+  // Objeto para manejar la apertura y datos del modal de procesamiento
+  public selectedSancion: Sancion | null = null;
+  public pagoRealizado: number = 0;
+  
+  // 🚩 DATOS DE ORIGEN: Lista de Sanciones Vigentes
+  private activeSanciones: Sancion[] = [
+    { 
+        idSancion: "S-001", solicitante: "Juan Pérez", motivo: "Retraso", tipo: "Suspension", 
+        montoMulta: 0, diasSuspension: 7, fechaInicio: "2024-12-01", fechaFin: "2024-12-08", estado: "Vigente" 
+    },
+    { 
+        idSancion: "S-002", solicitante: "María López", motivo: "Daño Material", tipo: "Multa", 
+        montoMulta: 25.50, diasSuspension: 0, fechaInicio: "2024-11-20", fechaFin: "N/A", estado: "Pendiente Pago" 
+    },
+    { 
+        idSancion: "S-003", solicitante: "Carlos Rodríguez", motivo: "Pérdida", tipo: "Ambos", 
+        montoMulta: 50.00, diasSuspension: 30, fechaInicio: "2024-12-05", fechaFin: "2025-01-05", estado: "Vigente" 
+    },
+  ];
 
- ngOnInit() {
+  constructor() { }
+
+  ngOnInit() {
     this.dataTable = {
       headerRow: [
-        "ISBN",
-        "Nombre",
-        "Autor",
+        "ID Sanción",
+        "Usuario",
+        "Motivo",
+        "Tipo",
+        "Monto/Días",
         "Estado",
-        "Solicitante",
         "Actions",
       ],
       footerRow: [
-        "ISBN",
-        "Nombre",
-        "Autor",
+        "ID Sanción",
+        "Usuario",
+        "Motivo",
+        "Tipo",
+        "Monto/Días",
         "Estado",
-        "Solicitante",
         "Actions",
       ],
-
-      dataRows: [
-        [
-          "978-0321765723",
-          "El Señor de los Anillos",
-          "J.R.R. Tolkien",
-          "Prestado",
-          "Juan Pérez",
-          "Actions",
-        ],
-        [
-          "978-1400031702",
-          "El Principito",
-          "Antoine de Saint-Exupéry",
-          "Prestado",
-          "",
-          "Actions",
-        ],
-        [
-          "978-0743273565",
-          "Cien Años de Soledad",
-          "Gabriel García Márquez",
-          "Prestado",
-          "Juan Pérez",
-          "",
-        ],
-        [
-          "978-0439708180",
-          "El Hobbit",
-          "J.R.R. Tolkien",
-          "Prestado",
-          "María López",
-          "Actions",
-        ],
-        [
-          "978-0061120084",
-          "Moby Dick",
-          "Herman Melville",
-          "Prestado",
-          "Pepe Martínez",
-          "Actions",
-        ],
-        [
-          "978-0451524935",
-          "1984",
-          "George Orwell",
-          "Prestado",
-          "Carlos Rodríguez",
-          "Actions",
-        ],
-        [
-          "978-0060930335",
-          "Orgullo y Prejuicio",
-          "Jane Austen",
-          "Prestado",
-          "Maria Fernández",
-          "Actions",
-        ],
-        [
-          "978-0385504201",
-          "El Código Da Vinci",
-          "Dan Brown",
-          "Prestado",
-          "Ana Gómez",
-          "Actions",
-        ],
-        [
-          "978-0544003415",
-          "Harry Potter y la Piedra Filosofal",
-          "J.K. Rowling",
-          "Prestado",
-          "Miguel Sánchez",
-          "Actions",
-        ],
-        [
-          "978-0743273565",
-          "Drácula",
-          "Bram Stoker",
-          "Prestado",
-          "Luis Vargas",
-          "Actions",
-        ],
-      ],
+      dataRows: this.activeSanciones.map((s) => [
+        s.idSancion,
+        s.solicitante,
+        s.motivo,
+        s.tipo,
+        this.getMontoDiasDisplay(s), // Columna 4 (Monto/Días)
+        s.estado, // Columna 5 (Estado)
+        s.idSancion, // Columna 6 (Usaremos el ID para la acción)
+      ]),
     };
   }
 
+  // Helper para mostrar la columna Monto/Días
+  private getMontoDiasDisplay(sancion: Sancion): string {
+    let display = [];
+    if (sancion.montoMulta > 0) {
+        display.push(`Multa: $${sancion.montoMulta.toFixed(2)}`);
+    }
+    if (sancion.diasSuspension > 0) {
+        display.push(`Susp.: ${sancion.diasSuspension} días (hasta ${sancion.fechaFin})`);
+    }
+    return display.join(' | ');
+  }
+
   ngAfterViewInit() {
+    setTimeout(() => {
+        this.initializeDataTable();
+        this.setupDataTableClickHandlers();
+        $(".card .material-datatables label").addClass("form-group");
+    }, 10);
+  }
+
+  private initializeDataTable(): void {
     $("#datatablesSuspenderOMultas").DataTable({
       pagingType: "full_numbers",
       lengthMenu: [
@@ -129,97 +112,134 @@ export class SuspenderMultasComponent implements OnInit, AfterViewInit {
       responsive: true,
       language: {
         search: "_INPUT_",
-        searchPlaceholder: "Search records",
+        searchPlaceholder: "Buscar sanciones...",
       },
-      
+
       data: this.dataTable.dataRows,
       columnDefs: [
-        // REGLA #1: Para la última columna (ACCIONES) - Ya la tenías
+        // --- REGLA #1: Columna de ESTADO de Sanción ---
         {
-          targets: -1,
-          className: "text-right",
-          orderable: false,
-          render: function (data, type, row) {
-            return `
-            <div class="dropdown">
-                <button href="#" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="true" >
-                    Regular
-                    <b class="caret"></b>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="#" data-toggle="modal" data-target="#myModal">ABRIR MODAL</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                </ul>
-            </div>
-          `;
+          targets: 5, // Columna de Estado (índice 5)
+          render: (data, type, row) => {
+            let badgeClass = "";
+            switch (data) {
+                case "Vigente":
+                    badgeClass = "badge-danger";
+                    break;
+                case "Pendiente Pago":
+                    badgeClass = "badge-warning";
+                    break;
+                case "Finalizada":
+                    badgeClass = "badge-success";
+                    break;
+                default:
+                    badgeClass = "badge-secondary";
+            }
+            return `<div class="badge fs-6 w-100 ${badgeClass} text-center">${data}</div>`;
           },
         },
-        // --- REGLA #2: NUEVA REGLA PARA LA COLUMNA DE ESTADO ---
+        
+        // --- REGLA #2: Columna de ACCIONES (Procesar Sanción) ---
         {
-          // Apuntamos a la cuarta columna (índice 3)
-          targets: 3,
-          render: function (data, type, row) {
-            // 'data' aquí será el texto: "Prestado", "Disponible", etc.
-            let badgeClass = "";
-
-            // Asignamos una clase de color diferente según el estado
-            switch (data.toLowerCase()) {
-              case "prestado":
-                badgeClass = "badge-warning"; // Amarillo para 'Prestado'
-                break;
-              case "disponible":
-                badgeClass = "badge-success"; // Verde para 'Disponible'
-                break;
-              case "en reparación":
-                badgeClass = "badge-danger"; // Rojo para 'En Reparación'
-                break;
-              default:
-                badgeClass = "badge-secondary"; // Gris para cualquier otro estado
+          targets: -1, // Última columna (índice 6)
+          className: "text-right",
+          orderable: false,
+          render: (data, type, row) => {
+            const estadoActual = row[5]; 
+            
+            if (estadoActual === "Vigente" || estadoActual === "Pendiente Pago") {
+                return `
+                  <button type="button" class="btn btn-warning btn-round btn-sm process-sancion" 
+                          data-id="${data}" data-toggle="modal" data-target="#processSancionModal" title="Procesar Sanción/Pago">
+                      <i class="material-icons">payment</i> Gestionar
+                  </button>
+                `;
+            } else {
+                return `
+                  <button type="button" class="btn btn-default btn-round btn-sm disabled" title="Sanción Finalizada">
+                      <i class="material-icons">check</i> Finalizada
+                  </button>
+                `;
             }
-
-            // Devolvemos el HTML del badge con la clase y el texto dinámicos
-            return `<div class="badge fs-6 w-100 ${badgeClass}">${data}</div>`;
           },
         },
       ],
     });
+  }
 
-    const table = $("#datatablesSuspenderOMultas").DataTable();
+  // Manejador de clics en el botón "Gestionar"
+  private setupDataTableClickHandlers(): void {
+    $("body").off("click", "#datatablesSuspenderOMultas .process-sancion"); 
 
-    // Edit record
-    table.on("click", ".edit", function (e) {
-      let $tr = $(this).closest("tr");
-      if ($($tr).hasClass("child")) {
-        $tr = $tr.prev(".parent");
+    $("body").on("click", "#datatablesSuspenderOMultas .process-sancion", (e: any) => {
+      e.preventDefault();
+      const idSancion = $(e.currentTarget).data("id");
+      this.cargarDetalleSancion(idSancion);
+    });
+  }
+
+  // FUNCIÓN: Carga los detalles de la sanción en el formulario del modal
+  public cargarDetalleSancion(idSancion: string): void {
+    const sancion = this.activeSanciones.find((s) => s.idSancion === idSancion);
+
+    if (sancion) {
+        this.selectedSancion = sancion;
+        this.pagoRealizado = sancion.montoMulta > 0 ? sancion.montoMulta : 0; // Pre-llenar con el monto total
+    } else {
+      this.selectedSancion = null;
+      console.error(`Sanción con ID ${idSancion} no encontrada.`);
+    }
+  }
+  
+  // FUNCIÓN: Simula el registro de la Gestión de Sanción (Pago/Finalización)
+  public procesarSancion(): void {
+      if (!this.selectedSancion) return;
+
+      const s = this.selectedSancion;
+      const index = this.activeSanciones.findIndex(e => e.idSancion === s.idSancion);
+
+      if (s.montoMulta > 0 && this.pagoRealizado < s.montoMulta) {
+          alert(`⚠️ Error: El pago ($${this.pagoRealizado.toFixed(2)}) es menor al monto total de la multa ($${s.montoMulta.toFixed(2)}).`);
+          return;
       }
-
-      var data = table.row($tr).data();
-      alert(
-        "You press on Row: " +
-          data[0] +
-          " " +
-          data[1] +
-          " " +
-          data[2] +
-          "'s row."
-      );
-      e.preventDefault();
-    });
-
-    // Delete a record
-    table.on("click", ".remove", function (e) {
-      const $tr = $(this).closest("tr");
-      table.row($tr).remove().draw();
-      e.preventDefault();
-    });
-
-    //Like record
-    table.on("click", ".like", function (e) {
-      alert("You clicked on Like button");
-      e.preventDefault();
-    });
-
-    $(".card .material-datatables label").addClass("form-group");
+      
+      let mensaje = `Sanción #${s.idSancion} de ${s.solicitante} procesada.`;
+      
+      // Actualizar el estado
+      if (s.diasSuspension > 0 && s.estado === 'Vigente') {
+          // Si tiene suspensión y está vigente, asumimos que se pagó la multa (si aplica) y la suspensión sigue.
+          // O si la suspensión ya pasó, se finaliza. 
+          if (new Date() > new Date(s.fechaFin) || s.tipo === 'Multa') {
+               this.activeSanciones[index].estado = 'Finalizada';
+               mensaje += " Estado cambiado a Finalizada.";
+          }
+      } else if (s.montoMulta > 0 && s.estado === 'Pendiente Pago') {
+          // Si solo tenía multa y se pagó
+          this.activeSanciones[index].estado = 'Finalizada';
+          mensaje += " Multa pagada y sanción Finalizada.";
+      } else {
+           // Caso genérico, forzar Finalizada (por si se finaliza manualmente antes de tiempo)
+           this.activeSanciones[index].estado = 'Finalizada';
+           mensaje += " Finalizada manualmente.";
+      }
+      
+      alert(`✅ ${mensaje}`);
+      
+      $("#processSancionModal").modal("hide");
+      this.selectedSancion = null;
+      this.reinitializeTable();
+  }
+  
+  // Función para destruir y recrear la tabla
+  private reinitializeTable(): void {
+    const table = $("#datatablesSuspenderOMultas").DataTable();
+    if (table) {
+        table.destroy();
+    }
+    this.ngOnInit(); // Recarga los datos mapeados
+    setTimeout(() => {
+        this.initializeDataTable();
+        this.setupDataTableClickHandlers();
+    }, 10);
   }
 }

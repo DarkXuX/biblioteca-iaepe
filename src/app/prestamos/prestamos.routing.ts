@@ -10,7 +10,7 @@ import { HistoricoUsuarioComponent } from "./historico-usuario/historico-usuario
 import { PrestamoSalaComponent } from "./prestamo-en-sala/prestamo-en-sala.component";
 import { PrestarComponent } from "./prestar/prestar.component";
 import { RenovarComponent } from "./renovar/renovar.component";
-import { ReportesPrestamosComponent } from "./reportes/reportes.component";
+import { ReportesComponent } from "./reportes/reportes.component";
 import { ReservarComponent } from "./reservar/reservar.component";
 import { SuspenderMultasComponent } from "./suspender-multas/suspender-multas.component";
 
@@ -50,7 +50,7 @@ export const PrestamosRoutes: Routes = [
         component: RenovarComponent,
       },{
         path: "reportes",
-        component: ReportesPrestamosComponent,
+        component: ReportesComponent,
       },{
         path: "reservar",
         component: ReservarComponent,

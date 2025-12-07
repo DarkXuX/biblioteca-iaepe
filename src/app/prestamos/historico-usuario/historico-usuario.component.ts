@@ -1,24 +1,58 @@
 import { Component, OnInit, AfterViewInit } from "@angular/core";
 
+// Interfaces de apoyo para DataTables
 declare interface DataTable {
   headerRow: string[];
   footerRow: string[];
   dataRows: string[][];
 }
 
-declare const $: any;
+// 🚩 INTERFAZ: Define la estructura de un movimiento (préstamo/devolución)
+// Se reutiliza la estructura del Histórico de Ítems para consistencia
+interface Movement {
+  loanId: string;
+  isbn: string;
+  titulo: string;
+  autor: string;
+  status: "Prestado" | "Devuelto" | "Extraviado" | "En Reparacion";
+  usuarioNombre: string;
+  usuarioCedula: string;
+  fechaPrestamo: string;
+  fechaDevolucionEsperada: string;
+  condicionSalida: "Excelente" | "Buena" | "Regular" | "Mala";
+
+  // Propiedades para la Devolución/Detalle
+  fechaDevolucionReal?: string;
+  condicionEntrada?: "Excelente" | "Buena" | "Regular" | "Mala";
+  observaciones?: string;
+}
+
+declare const $: any; // Declaración para usar jQuery / DataTables
+
 @Component({
   selector: "app-historico-usuario-cmp",
   templateUrl: "./historico-usuario.component.html",
 })
-export class HistoricoUsuarioComponent implements AfterViewInit {
+export class HistoricoUsuarioComponent implements OnInit, AfterViewInit {
   public dataTable: DataTable;
+  // 🚩 PROPIEDAD para almacenar el movimiento seleccionado y enlazar con el modal
+  selectedMovement: Movement | null = null;
+
+  // 🚩 DATOS DE ORIGEN: Usaremos un array tipado para simular la fuente de datos completa.
+  // Se han completado los datos faltantes para que la lógica funcione.
+  private movements: Movement[] = [
+    { loanId: "L-001", isbn: "978-0321765723", titulo: "El Señor de los Anillos", autor: "J.R.R. Tolkien", status: "Prestado", usuarioNombre: "Juan Pérez", usuarioCedula: "V-1234567", fechaPrestamo: "01/10/2025", fechaDevolucionEsperada: "15/10/2025", condicionSalida: "Excelente" },
+    { loanId: "L-002", isbn: "978-1400031702", titulo: "El Principito", autor: "Antoine de Saint-Exupéry", status: "Devuelto", usuarioNombre: "María López", usuarioCedula: "V-8765432", fechaPrestamo: "05/09/2025", fechaDevolucionEsperada: "19/09/2025", condicionSalida: "Buena", fechaDevolucionReal: "19/09/2025", condicionEntrada: "Buena", observaciones: "Devuelto en perfecto estado." },
+    { loanId: "L-003", isbn: "978-0743273565", titulo: "Cien Años de Soledad", autor: "Gabriel García Márquez", status: "Prestado", usuarioNombre: "Juan Pérez", usuarioCedula: "V-1234567", fechaPrestamo: "10/10/2025", fechaDevolucionEsperada: "24/10/2025", condicionSalida: "Excelente" },
+    { loanId: "L-004", isbn: "978-0439708180", titulo: "El Hobbit", autor: "J.R.R. Tolkien", status: "Extraviado", usuarioNombre: "María López", usuarioCedula: "V-8765432", fechaPrestamo: "15/09/2025", fechaDevolucionEsperada: "29/09/2025", condicionSalida: "Regular", observaciones: "Reportado como extraviado por el usuario." },
+    { loanId: "L-005", isbn: "978-0061120084", titulo: "Moby Dick", autor: "Herman Melville", status: "Prestado", usuarioNombre: "Pepe Martínez", usuarioCedula: "V-9998887", fechaPrestamo: "20/10/2025", fechaDevolucionEsperada: "03/11/2025", condicionSalida: "Excelente" },
+  ];
 
   ngOnInit() {
     this.dataTable = {
       headerRow: [
         "ISBN",
-        "Nombre",
+        "Título",
         "Autor",
         "Estado",
         "Solicitante",
@@ -26,100 +60,36 @@ export class HistoricoUsuarioComponent implements AfterViewInit {
       ],
       footerRow: [
         "ISBN",
-        "Nombre",
+        "Título",
         "Autor",
         "Estado",
         "Solicitante",
         "Actions",
       ],
-
-      dataRows: [
-        [
-          "978-0321765723",
-          "El Señor de los Anillos",
-          "J.R.R. Tolkien",
-          "Prestado",
-          "Juan Pérez",
-          "Actions",
-        ],
-        [
-          "978-1400031702",
-          "El Principito",
-          "Antoine de Saint-Exupéry",
-          "Prestado",
-          "",
-          "Actions",
-        ],
-        [
-          "978-0743273565",
-          "Cien Años de Soledad",
-          "Gabriel García Márquez",
-          "Prestado",
-          "Juan Pérez",
-          "",
-        ],
-        [
-          "978-0439708180",
-          "El Hobbit",
-          "J.R.R. Tolkien",
-          "Prestado",
-          "María López",
-          "Actions",
-        ],
-        [
-          "978-0061120084",
-          "Moby Dick",
-          "Herman Melville",
-          "Prestado",
-          "Pepe Martínez",
-          "Actions",
-        ],
-        [
-          "978-0451524935",
-          "1984",
-          "George Orwell",
-          "Prestado",
-          "Carlos Rodríguez",
-          "Actions",
-        ],
-        [
-          "978-0060930335",
-          "Orgullo y Prejuicio",
-          "Jane Austen",
-          "Prestado",
-          "Maria Fernández",
-          "Actions",
-        ],
-        [
-          "978-0385504201",
-          "El Código Da Vinci",
-          "Dan Brown",
-          "Prestado",
-          "Ana Gómez",
-          "Actions",
-        ],
-        [
-          "978-0544003415",
-          "Harry Potter y la Piedra Filosofal",
-          "J.K. Rowling",
-          "Prestado",
-          "Miguel Sánchez",
-          "Actions",
-        ],
-        [
-          "978-0743273565",
-          "Drácula",
-          "Bram Stoker",
-          "Prestado",
-          "Luis Vargas",
-          "Actions",
-        ],
-      ],
+      // 🚩 Mapeamos los datos del array tipado al formato de string[][]
+      dataRows: this.movements.map((m) => [
+        m.isbn, // Columna 0
+        m.titulo, // Columna 1
+        m.autor, // Columna 2
+        m.status, // Columna 3 (Estado)
+        m.usuarioNombre, // Columna 4 (Solicitante)
+        m.loanId, // Columna 5 (Usaremos el loanId para el botón, no se muestra)
+      ]),
     };
   }
 
   ngAfterViewInit() {
-    $("#datatablesHistoricoUsuario").DataTable({
+    // 🚩 CORRECCIÓN CRÍTICA: Usar setTimeout para asegurar la inicialización de DataTables
+    setTimeout(() => {
+      this.initializeDataTable();
+      this.setupDataTableClickHandlers(); // Llama al manejador de clics
+      $(".card .material-datatables label").addClass("form-group");
+    }, 10);
+  }
+
+  private initializeDataTable(): void {
+    const table = $("#datatablesHistoricoUsuario").DataTable({
+      data: this.dataTable.dataRows, // Inyectamos la data mapeada
       pagingType: "full_numbers",
       lengthMenu: [
         [10, 25, 50, -1],
@@ -128,98 +98,141 @@ export class HistoricoUsuarioComponent implements AfterViewInit {
       responsive: true,
       language: {
         search: "_INPUT_",
-        searchPlaceholder: "Search records",
+        searchPlaceholder: "Buscar registros",
       },
-      // 1. Pasamos los datos como antes
-      data: this.dataTable.dataRows,
-      // 2. AÑADIMOS ESTA SECCIÓN PARA DEFINIR LAS COLUMNAS
       columnDefs: [
-        // REGLA #1: Para la última columna (ACCIONES) - Ya la tenías
         {
-          targets: -1,
+          targets: -1, // Última columna (Actions)
           className: "text-right",
           orderable: false,
-          render: function (data, type, row) {
-            return `
-            <div class="dropdown">
-                <button href="#" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="true" >
-                    Regular
-                    <b class="caret"></b>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="#" data-toggle="modal" data-target="#myModal">ABRIR MODAL</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                </ul>
-            </div>
-          `;
-          },
-        },
-        // --- REGLA #2: NUEVA REGLA PARA LA COLUMNA DE ESTADO ---
-        {
-          // Apuntamos a la cuarta columna (índice 3)
-          targets: 3,
-          render: function (data, type, row) {
-            // 'data' aquí será el texto: "Prestado", "Disponible", etc.
-            let badgeClass = "";
+          render: (data, type, row) => {
+            const loanId = data; // En data viene el loanId
+            const status = row[3]; // Columna de estado
 
-            // Asignamos una clase de color diferente según el estado
-            switch (data.toLowerCase()) {
-              case "prestado":
-                badgeClass = "badge-warning"; // Amarillo para 'Prestado'
-                break;
-              case "disponible":
-                badgeClass = "badge-success"; // Verde para 'Disponible'
-                break;
-              case "en reparación":
-                badgeClass = "badge-danger"; // Rojo para 'En Reparación'
-                break;
-              default:
-                badgeClass = "badge-secondary"; // Gris para cualquier otro estado
+            let actionButton = "";
+            let dropdownItems = "";
+
+            if (status === "Prestado") {
+              actionButton = "Gestionar Préstamo";
+              dropdownItems = `
+                <li><a href="javascript:void(0);" class="view-detail" data-id="${loanId}" data-toggle="modal" data-target="#myModal">Registrar Devolución / Ver Detalles</a></li>
+                <li><a href="javascript:void(0);" class="extend-loan">Extender Préstamo</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript:void(0);" class="report-lost">Reportar Extraviado</a></li>
+              `;
+            } else {
+              actionButton = "Ver Detalles";
+              dropdownItems = `
+                <li><a href="javascript:void(0);" class="view-detail" data-id="${loanId}" data-toggle="modal" data-target="#myModal">Ver Detalles</a></li>
+              `;
             }
 
-            // Devolvemos el HTML del badge con la clase y el texto dinámicos
+            return `
+              <div class="dropdown">
+                  <button href="#" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                    ${actionButton}
+                    <b class="caret"></b>
+                  </button>
+                  <ul class="dropdown-menu">
+                      ${dropdownItems}
+                  </ul>
+              </div>
+            `;
+          },
+        },
+        {
+          targets: 3, // Columna de Estado
+          render: function (data, type, row) {
+            let badgeClass = "";
+            switch (data.toLowerCase()) {
+              case "prestado":
+                badgeClass = "badge-warning";
+                break;
+              case "devuelto":
+                badgeClass = "badge-success";
+                break;
+              case "extraviado":
+                badgeClass = "badge-danger";
+                break;
+              case "en reparacion":
+                badgeClass = "badge-info";
+                break;
+              default:
+                badgeClass = "badge-secondary";
+            }
+            // Retornamos el badge
             return `<div class="badge fs-6 w-100 ${badgeClass}">${data}</div>`;
           },
         },
       ],
     });
+  }
 
-    const table = $("#datatablesHistoricoUsuario").DataTable();
+  // 🚩 FUNCIÓN CLAVE: Manejador de clics en la tabla
+  private setupDataTableClickHandlers(): void {
+    // Delegamos el evento de clic
+    $("body").off("click", "#datatablesHistoricoUsuario .view-detail");
 
-    // Edit record
-    table.on("click", ".edit", function (e) {
-      let $tr = $(this).closest("tr");
-      if ($($tr).hasClass("child")) {
-        $tr = $tr.prev(".parent");
+    $("body").on("click", "#datatablesHistoricoUsuario .view-detail", (e: any) => {
+      e.preventDefault();
+      const loanId = $(e.currentTarget).data("id");
+      this.cargarDetalleMovimiento(loanId);
+    });
+    
+    // Eliminamos los manejadores genéricos que no se usan en el render
+    $("#datatablesHistoricoUsuario").off("click", ".edit");
+    $("#datatablesHistoricoUsuario").off("click", ".remove");
+    $("#datatablesHistoricoUsuario").off("click", ".like");
+  }
+
+  // 🚩 FUNCIÓN: Simula la carga de los detalles del movimiento (Para el Modal)
+  public cargarDetalleMovimiento(loanId: string): void {
+    const movement = this.movements.find((m) => m.loanId === loanId);
+
+    if (movement) {
+      this.selectedMovement = { ...movement };
+
+      // Inicializar datos para el formulario de devolución si está prestado
+      if (this.selectedMovement.status === "Prestado") {
+        this.selectedMovement.fechaDevolucionReal = new Date().toLocaleDateString("es-VE");
+        this.selectedMovement.condicionEntrada = this.selectedMovement.condicionSalida;
+        this.selectedMovement.observaciones = "";
+      }
+    } else {
+      this.selectedMovement = null;
+      console.error(`Movimiento con ID ${loanId} no encontrado.`);
+    }
+  }
+
+  // 🚩 Función para simular el registro de la devolución
+  public registrarDevolucion(): void {
+    if (this.selectedMovement) {
+      alert(`Devolución de "${this.selectedMovement.titulo}" registrada.`);
+      
+      // Simulación: Actualizar la data en Angular
+      const index = this.movements.findIndex(m => m.loanId === this.selectedMovement!.loanId);
+      if(index !== -1) {
+        this.movements[index].status = 'Devuelto';
+        this.movements[index].fechaDevolucionReal = this.selectedMovement.fechaDevolucionReal;
+        this.movements[index].condicionEntrada = 'Excelente'; // Asumo la nueva condición
+        this.movements[index].observaciones = 'Devuelto por usuario'; 
       }
 
-      var data = table.row($tr).data();
-      alert(
-        "You press on Row: " +
-          data[0] +
-          " " +
-          data[1] +
-          " " +
-          data[2] +
-          "'s row."
-      );
-      e.preventDefault();
-    });
-
-    // Delete a record
-    table.on("click", ".remove", function (e) {
-      const $tr = $(this).closest("tr");
-      table.row($tr).remove().draw();
-      e.preventDefault();
-    });
-
-    //Like record
-    table.on("click", ".like", function (e) {
-      alert("You clicked on Like button");
-      e.preventDefault();
-    });
-
-    $(".card .material-datatables label").addClass("form-group");
+      $("#myModal").modal("hide");
+      
+      // Reiniciar la tabla para reflejar el nuevo estado (Devuelto)
+      this.reinitializeTable();
+    }
+  }
+  
+  // Función para destruir y recrear la tabla (necesario con DataTables)
+  private reinitializeTable(): void {
+    const table = $("#datatablesHistoricoUsuario").DataTable();
+    table.destroy();
+    this.ngOnInit(); // Recarga los datos mapeados
+    setTimeout(() => {
+        this.initializeDataTable();
+        this.setupDataTableClickHandlers(); 
+    }, 10);
   }
 }
