@@ -3,21 +3,14 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-
-           <div class="card-header card-header-primary card-header-icon  d-flex justify-content-between">
+          <div class="card-header card-header-primary card-header-icon d-flex justify-content-between">
             <div class="w-100">
               <div class="card-icon">
                 <i class="material-icons">add</i>
               </div>
-              <h4 class="card-title">Inventario</h4>
+              <h4 class="card-title">Inventario de Ejemplares</h4>
             </div>
             <div class="mt-2 d-flex">
-              <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
-                <i class="material-icons material-icons">download</i>
-              </button>
-              <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
-                <i class="material-icons material-icons">download</i>
-              </button>
               <button mat-raised-button mat-min-fab class="btn btn-primary btn-round btn-fab mr-2">
                 <i class="material-icons material-icons">download</i>
               </button>
@@ -26,11 +19,8 @@
 
           <div class="card-body">
             <div class="toolbar">
-              <!--        Here you can write extra buttons/actions for the toolbar              -->
-            </div>
-
-             
-             
+              </div>
+            
             <div class="material-datatables">
               <table id="datatablesInventario" class="table table-striped table-no-bordered table-hover" cellspacing="0"
                 width="100%" style="width:100%">
@@ -53,110 +43,171 @@
                   </tr>
                 </tfoot>
                 <tbody>
-                  <!-- <tr *ngFor="let row of dataTable.dataRows">
-                    <td>{{row[0]}}</td>
-                    <td>{{row[1]}}</td>
-                    <td>{{row[2]}}</td>
-                    <td>{{row[3]}}</td>
-                    <td>{{row[4]}}</td>
-                    <td class="text-right">
-                      <a href="javascript:void(0)" class="btn btn-link btn-info btn-just-icon like"><i
-                          class="material-icons">favorite</i></a>
-                      <a href="javascript:void(0" class="btn btn-link btn-warning btn-just-icon edit"><i
-                          class="material-icons">dvr</i></a>
-                      <a href="javascript:void(0s" class="btn btn-link btn-danger btn-just-icon remove"><i
-                          class="material-icons">close</i></a>
-                    </td>
-                  </tr> -->
-                </tbody>
+                  </tbody>
               </table>
             </div>
           </div>
-
-          <!-- end content-->
+          </div>
         </div>
-        <!--  end card  -->
       </div>
-      <!-- end col-md-12 -->
     </div>
-    <!-- end row -->
-  </div>
 </div>
 
-<!-- Classic Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg" *ngIf="selectedEjemplar">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Devolución</h4>
+        <h4 class="modal-title">Detalle y Gestión del Ejemplar</h4>
         <button mat-button type="button" class="close" data-dismiss="modal" aria-hidden="true">
           <i class="material-icons">clear</i>
         </button>
       </div>
       <div class="modal-body">
         <form method="get" action="/" class="form-horizontal">
+          
+          <h5 class="text-primary mt-0 mb-3">1. Datos de la Obra</h5>
+          
           <div class="row">
-            <label class="col-sm-2 col-form-label">Código del Libro / ID del Ejemplar</label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 col-form-label">ID Inventario / Cód. Barras</label>
+            <div class="col-sm-9">
               <mat-form-field class="example-full-width">
-                <input matInput type="text">
+                <input matInput type="text" [value]="selectedEjemplar.id" readonly>
               </mat-form-field>
             </div>
           </div>
+          
           <div class="row">
-            <label class="col-sm-2 col-form-label">Título del Libro</label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 col-form-label">Título</label>
+            <div class="col-sm-9">
               <mat-form-field class="example-full-width">
-                <input matInput type="text">
+                <input matInput type="text" [value]="selectedEjemplar.titulo" readonly>
               </mat-form-field>
             </div>
           </div>
+          
           <div class="row">
-            <label class="col-sm-2 col-form-label">Autor(es)</label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 col-form-label">Autor(es) / Editorial</label>
+            <div class="col-sm-9">
               <mat-form-field class="example-full-width">
-                <input matInput type="text">
+                <input matInput type="text" [value]="selectedEjemplar.autor" readonly>
+              </mat-form-field>
+            </div>
+          </div>
+          
+          <hr class="mt-4 mb-4">
+
+          <h5 class="text-primary">2. Ubicación y Condición</h5>
+          
+          <div class="row">
+            <label class="col-sm-3 col-form-label">Clasificación (Cota)</label>
+            <div class="col-sm-3">
+              <mat-form-field class="example-full-width">
+                <input matInput type="text" [value]="selectedEjemplar.clasificacion" placeholder="Dewey/Cutter">
+              </mat-form-field>
+            </div>
+            
+            <label class="col-sm-3 col-form-label">Ubicación Física</label>
+            <div class="col-sm-3">
+              <mat-form-field class="example-full-width">
+                <mat-select [value]="selectedEjemplar.ubicacionFisica" placeholder="Seleccionar ubicación">
+                  <mat-option value="Sala Principal">Sala Principal</mat-option>
+                  <mat-option value="Depósito">Depósito</mat-option>
+                </mat-select>
               </mat-form-field>
             </div>
           </div>
 
           <div class="row">
-            <label class="col-sm-2 col-form-label">Fecha de Devolución</label>
-            <div class="col-sm-10">
-              <mat-form-field>
-                <input matInput [matDatepicker]="picker" placeholder="Choose a date" (click)="picker.open()">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
+            <label class="col-sm-3 col-form-label">Estante / Peldaño</label>
+            <div class="col-sm-9">
+              <mat-form-field class="example-full-width">
+                <input matInput type="text" [value]="selectedEjemplar.estantePeldano" placeholder="Ej: A-3, P-2">
               </mat-form-field>
             </div>
           </div>
-
-
+          
           <div class="row">
-            <label class="col-sm-2 col-form-label">Condiciones del libro</label>
-            <div class="col-sm-10">
-              <mat-radio-button value="1" name="exampleRadios" checked="true">En buen estado</mat-radio-button>
+            <label class="col-sm-3 col-form-label">Condición Actual</label>
+            <div class="col-sm-9">
+              <mat-radio-button value="Excelente" name="condicion" [checked]="selectedEjemplar.condicionActual === 'Excelente'">Excelente</mat-radio-button>
               <br>
-              <mat-radio-button value="1" name="exampleRadios" checked="true">Con daños menores</mat-radio-button>
+              <mat-radio-button value="Deterioro moderado" name="condicion" [checked]="selectedEjemplar.condicionActual === 'Deterioro moderado'">Deterioro moderado</mat-radio-button>
               <br>
-              <mat-radio-button value="1" name="exampleRadios" checked="true">Páginas dobladas</mat-radio-button>
-              <br>
+              <mat-radio-button value="Mal estado" name="condicion" [checked]="selectedEjemplar.condicionActual === 'Mal estado'">Mal estado</mat-radio-button>
             </div>
           </div>
 
-          <div class="row">
-            <label class="col-sm-2 col-form-label">Observaciones</label>
-            <div class="col-sm-10">
+          <div class="row mt-4">
+            <label class="col-sm-3 col-form-label">Observaciones</label>
+            <div class="col-sm-9">
               <mat-form-field class="example-full-width">
-               <textarea matInput placeholder="Escribe aqui..."></textarea>
+               <textarea matInput placeholder="Notas de mantenimiento o cambios de ubicación...">{{ selectedEjemplar.observaciones }}</textarea>
               </mat-form-field> 
             </div>
           </div>
+          
+          <hr class="mt-4 mb-4">
+
+          <h5 class="text-primary">3. Estado y Movimiento</h5>
+
+          <div class="row">
+            <label class="col-sm-3 col-form-label">Status Actual</label>
+            <div class="col-sm-9">
+              <p class="mt-2">
+                <span class="badge fs-6" 
+                      [ngClass]="{
+                        'badge-success': selectedEjemplar.status === 'Disponible',
+                        'badge-warning': selectedEjemplar.status === 'Prestado',
+                        'badge-danger': selectedEjemplar.status === 'Desincorporado'
+                      }">
+                  {{ selectedEjemplar.status | uppercase }}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <ng-container *ngIf="selectedEjemplar.status === 'Prestado'">
+              <div class="row">
+                <label class="col-sm-3 col-form-label text-warning">Prestado a</label>
+                <div class="col-sm-9">
+                  <mat-form-field class="example-full-width">
+                    <input matInput type="text" [value]="selectedEjemplar.prestamo?.usuario + ' / ' + selectedEjemplar.prestamo?.cedula" readonly>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <label class="col-sm-3 col-form-label text-warning">F. Esperada / Condición al salir</label>
+                <div class="col-sm-9">
+                  <mat-form-field class="example-full-width">
+                    <input matInput type="text" [value]="selectedEjemplar.prestamo?.fechaEsperada + ' / ' + selectedEjemplar.prestamo?.condicionSalida" readonly>
+                  </mat-form-field>
+                </div>
+              </div>
+          </ng-container>
+          
         </form>
       </div>
-      <div class="modal-footer">
-        <button mat-raised-button type="button" class="btn btn-primary btn-link">Guardar</button>
-        <button mat-raised-button type="button" class="btn btn-danger btn-link" data-dismiss="modal">Cerrar</button>
+      <div class="modal-footer d-flex justify-content-between">
+        <button mat-raised-button type="button" class="btn btn-warning btn-link" 
+                *ngIf="selectedEjemplar.status !== 'Desincorporado' && selectedEjemplar.status !== 'Prestado'">
+          Desincorporar
+        </button>
+
+        <div>
+          <button mat-raised-button type="button" class="btn btn-primary btn-link">Guardar Cambios</button>
+          
+          <button mat-raised-button type="button" class="btn btn-success btn-link" 
+                  *ngIf="selectedEjemplar.status === 'Prestado'">
+            Registrar Devolución
+          </button>
+          
+          <button mat-raised-button type="button" class="btn btn-success btn-link" 
+                  *ngIf="selectedEjemplar.status === 'Disponible'">
+            Registrar Nuevo Préstamo
+          </button>
+          
+          <button mat-raised-button type="button" class="btn btn-danger btn-link" data-dismiss="modal">Cerrar</button>
+        </div>
       </div>
     </div>
   </div>

@@ -168,9 +168,7 @@ export class PoliticasPrestamoComponent implements OnInit, AfterViewInit {
                     <b class="caret"></b>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="#" data-toggle="modal" data-target="#myModal">ABRIR MODAL</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
+                    <li><a href="#" data-toggle="modal" data-target="#myModal">Configuración</a></li>
                 </ul>
             </div>
           `;
